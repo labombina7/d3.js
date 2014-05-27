@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>El Quijote otra vez</title>
+        <script type="text/javascript" src="../d3.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    </head>
+    <body>
+        <h1>El Quijote otra vez</h1>
+        <script src="../d3.min.js"></script>
+        <script type="text/javascript">
+        var quijoteTam=[
+            {
+                texto:"En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.",
+                tamanyo:"12px"},
+            {
+                texto: "Una olla de algo más vaca que carnero, salpicón las más noches, duelos y quebrantos los sábados, lentejas los viernes, algún palomino de añadidura los domingos, consumían las tres partes de su hacienda.",
+                tamanyo:"25px"},
+            {
+                texto:" El resto della concluían sayo de velarte, calzas de velludo para las fiestas con sus pantuflos de lo mismo, los días de entre semana se honraba con su vellori de lo más fino.",
+                tamanyo:"35px"}
+            ];
+        // Insertar en una sola linea los tres parrafos con sus tres textos+tamaños de fuente correspondientes
+
+        d3.select('body')
+          .selectAll('p')
+          .data(quijoteTam)
+          .enter()
+          .append('div')
+          .style("text-align", function(d,i){return "center";})
+          .attr('id', function(d,i){return "id_"+i;})
+          .append('p')
+          .attr('id', function(d,i){return "p_id_"+i;})
+          .style("font-size",function(d,i){return d.tamanyo;})
+          .html(function(d,i){return d.texto;})
+
+        var centered = true;
+
+        d3.selectAll('div')
+            .append('div')
+            .html("<button type=\"button\">Defórmame</button>")
+            .on('click', function(d,i){
+                d3.select('#p_id_'+i)
+                  .transition().duration(3000)
+                  .style('font-size', function(data,index){
+                    if(centered){
+                        centered = false;
+                        //return "left";
+                        return "30px";
+                    }
+                    else{
+                        centered = true;
+                        //return "center";
+                        return "10px";
+                    }
+                })
+            })
+
+        </script>
+    </body>
+</html>

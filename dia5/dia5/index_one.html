@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link href='http://fonts.googleapis.com/css?family=Exo:100,200,300,400,500,600,700,800,900,100italic,200italic,300italic,400italic,500italic,600italic,700italic,800italic,900italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <style>
+            /* Código CSS */
+            body { font-family: "Exo", sans-serif; }
+            .subunit.ESP { fill: #ddc; }
+            .subunit.FRA, .subunit.MAR, .subunit.PRT { display: none; }
+            .subunit-boundary {
+              fill: none;
+              stroke: #777;
+              stroke-dasharray: 2,2;
+              stroke-linejoin: round;
+            }
+            .subunit-boundary.OTHER {
+              stroke: #aaa;
+            }
+            .subunit-label {
+              fill: #777;
+              fill-opacity: .5;
+              font-size: 16px;
+              font-weight: 300;
+              text-anchor: middle;
+            }
+
+        </style>
+    </head>
+    <body>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="http://d3js.org/queue.v1.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <div>Selecciona propiedad a utilizar: <select id="selector"></select></div>
+        <script>
+            /* Código JavaScript */
+            var width = 1200,
+                height = 700,
+                selectedProperty = "population"
+                baseColors = d3.scale.category20();
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .call(d3.behavior.zoom().on("zoom", redraw))
+                        .append("g");
+            queue().defer(d3.json, "json/es.json")
+                   .defer(d3.tsv, "tsv/ine.tsv")
+                   .await(ready);
+            function redraw () {
+                self.svg.attr("transform", "translate(" + d3.event.translate + ")"
+                                           + " scale(" + d3.event.scale + ")");
+            };
+            function ready (error, es, ine) {
+                var provincesData = {};
+                ine.forEach(function (d, i) {
+                    if (i == 0) { fillSelector(Object.keys(d)); }
+                    Object.keys(d).forEach(function (k) {
+                      var v = parseFloat(d[k]);
+                      if (!isNaN(v)) {
+                        d[k] = v;
+                      }
+                    });
+                    provincesData[d.provincia] = d;
+                });
+                function fillSelector (keys) {
+                  keys = keys.filter(function (e) { return e !== "provincia"; })
+                  d3.select("#selector")
+                    .selectAll("option")
+                    .data(keys)
+                    .enter()
+                    .append("option")
+                    .attr("value", function (d) { return d; })
+                    .text(function (d) { return d; });
+                  d3.select("#selector").on("change", function () {
+                    var sel = document.getElementById("selector");
+                    selectedProperty = sel.options[sel.selectedIndex].value;
+                    updateColors();
+                  });
+                };
+                function updateColors () {
+                    var tempColor = baseColors(selectedProperty),
+                        tempScale = d3.scale.linear()
+                                            .domain([d3.min(ine, function (d) { return d[selectedProperty]; }),
+                                                     d3.max(ine, function (d) { return d[selectedProperty]; })])
+                                            .range([d3.rgb(tempColor).brighter(3),
+                                                    d3.rgb(tempColor).darker(3)])
+                                            .clamp(true);
+                    svg.selectAll(".subunit.ESP")
+                       .transition()
+                       .duration(1000)
+                       .style("fill", function (d) {
+                         if ("properties" in d) {
+                           if ("name" in d.properties) {
+                             if (d.properties.name in provincesData) {
+                               if (provincesData[d.properties.name][selectedProperty] !== "-") {
+                                 return tempScale(provincesData[d.properties.name][selectedProperty]);
+                               }
+                             }
+                           }
+                         }
+                         return "#ddc";
+                       });
+                };
+                var subunits = topojson.feature(es, es.objects.subunits),
+                    projection = d3.geo.albers()
+                                       .center([0, 40.23])
+                                       .rotate([3.43, 0])
+                                       .parallels([40, 60])
+                                       .scale(4000)
+                                       .translate([width / 2, height / 2]),
+                    path = d3.geo.path()
+                                 .projection(projection);
+                svg.selectAll(".subunit")
+                   .data(topojson.feature(es, es.objects.subunits).features)
+                   .enter()
+                   .append("path")
+                   .attr("class", function (d) { return "subunit " + d.id.slice(0, 3); })
+                   .attr("d", path);
+                svg.append("path")
+                   .datum(topojson.mesh(es, es.objects.subunits, function (a, b) { return a !== b && a.id.slice(0, 3) === "ESP"; }))
+                   .attr("d", path)
+                   .attr("class", "subunit-boundary");
+                svg.append("path")
+                   .datum(topojson.mesh(es, es.objects.subunits, function (a, b) { return a === b && a.id.slice(0, 3) !== "ESP"; }))
+                   .attr("d", path)
+                   .attr("class", "subunit-boundary OTHER");
+                svg.append("path")
+                   .datum(topojson.feature(es, es.objects.places))
+                   .attr("d", path)
+                   .attr("class", "place");
+                svg.selectAll(".place-label")
+                   .data(topojson.feature(es, es.objects.places).features)
+                   .enter()
+                   .append("text")
+                   .attr("class", "place-label")
+                   .attr("transform", function (d) { return "translate(" + projection(d.geometry.coordinates) + ")"; })
+                   .attr("dy", ".35em")
+                   .text(function (d) { return d.properties.name; });
+                svg.selectAll(".place-label")
+                   .attr("x", function (d) { return d.geometry.coordinates[0] > -1 ? 6 : -6; })
+                   .style("text-anchor", function (d) { return d.geometry.coordinates[0] > -1 ? "start" : "end"; });
+                svg.selectAll(".subunit-label")
+                   .data(topojson.feature(es, es.objects.subunits).features)
+                   .enter()
+                   .append("text")
+                   .attr("class", function (d) { return "subunit-label " + d.id.slice(0, 3); })
+                   .attr("transform", function (d) { return "translate(" + path.centroid(d) + ")"; })
+                   .attr("dy", ".35em")
+                   .text(function (d) {
+                    return d.id.slice(0, 3) === "ESP" ? d.properties.name : "";
+                  });
+            };
+        </script>
+    </body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Sankey Diagram</title>
+<style>
+body {
+  height: 500px;
+}
+
+.node rect {
+  cursor: move;
+  fill-opacity: .9;
+}
+
+.node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .2;
+}
+
+.link:hover {
+  stroke-opacity: .5;
+}
+
+</style>
+<body>
+
+<p id="chart">
+
+<script src="d3.v3.js"></script>
+<script src="sankey.js"></script>
+<script>
+
+    var width = 960,
+        height = 500;
+
+    var format = d3.format(",.2f"),
+        color = d3.scale.category20();
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g");
+
+
+    // Inicialización del layout.
+    var sankey = d3.sankey()
+        .nodeWidth(15)
+        .nodePadding(10)
+        .size([width, height]);
+
+    // Generador de paths que representan los links.
+    var path = sankey.link();
+
+    // Carga de los datos desde un fichero JSON.
+    d3.json("sankeyData.json", function(sankeyData) {
+
+
+      // Asociación de los datos con el layout.
+      sankey.nodes(sankeyData.nodes)
+            .links(sankeyData.links)
+            .layout(32);
+
+      // Dibujamos los links.
+      var link = svg.append("g").selectAll(".link")
+          .data(sankeyData.links);
+
+      link.enter().append("path")
+          .attr("class", "link")
+          .attr("d", path) // Utilizamos el generador de paths para calcular la geometría del enlace.
+          .style("stroke-width", function(d) { return Math.max(1, d.dy); })
+          .sort(function(a, b) { return b.dy - a.dy; }); // Ordenamos los enlaces de mayor a menor
+
+      link.append("title")
+          .text(function(d) { return d.source.name + " → " + d.target.name + "\n" + format(d.value); });
+
+      // Dibujamos los nodos.
+      var node = svg.selectAll(".node")
+          .data(sankeyData.nodes)
+
+      node.enter().append("g")
+          .attr("class", "node")
+          .attr("transform", function(d) {return "translate(" + d.x + "," + d.y + ")"; })
+        .call(d3.behavior.drag() // Añadimos la gestión del dragging.
+          .origin(function(d) { return d; })
+          .on("dragstart", function() { this.parentNode.appendChild(this); })
+          .on("drag", dragmove))
+        .append("rect")
+          .attr("height", function(d) { return d.dy; }) // El alto del nodo lo ha calculado el layout.
+          .attr("width", sankey.nodeWidth()) // El ancho del nodo lo hemos definido al inicializar el layout.
+          .style("fill", function(d) { return d.color = color(d.name.replace(/ .*/, "")); })
+          .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
+        .append("title")
+          .text(function(d) { return d.name + "\n" + format(d.value); });;
+
+      node.append("text")
+          .attr("x", -6)
+          .attr("y", function(d) { return d.dy / 2; })
+          .attr("text-anchor", "end")
+          .text(function(d) { return d.name; })
+        .filter(function(d) { return d.x < width / 2; })
+          .attr("x", 6 + sankey.nodeWidth())
+          .attr("text-anchor", "start");
+
+      function dragmove(d) {
+        d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+        sankey.relayout(); // Al hacer drag sobre un nodo necesitamos recalcular la geometria de los enlaces.
+        link.attr("d", path); // Y redibujarla.
+      }
+});
+
+</script>
+</body>
+</html>

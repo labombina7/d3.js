@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Sankey Diagram</title>
+<style>
+body {
+  height: 500px;
+}
+
+.node rect {
+  cursor: move;
+  fill-opacity: .9;
+}
+
+.node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .2;
+}
+
+.link:hover {
+  stroke-opacity: .5;
+}
+.on{
+  stroke: red;
+  stroke-opacity: 1.0;
+}
+
+</style>
+<body>
+
+<p id="chart">
+
+<script src="d3.v3.js"></script>
+<script src="sankey.js"></script>
+<script>
+
+    var width = window.innerWidth,
+        height = window.innerHeight;
+
+    var format = d3.format(",.2f"),
+        color = d3.scale.category20();
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .call(d3.behavior.zoom().on("zoom", redraw))
+        .append("g");
+
+    // Función para la gestión del zoom y panning.
+    function redraw()
+    {
+        self.svg.attr("transform",
+                "translate(" + d3.event.translate + ")"
+                        + " scale(" + d3.event.scale + ")");
+    }
+
+    // Inicialización del layout.
+    var sankey = d3.sankey()
+        .nodeWidth(15)
+        .nodePadding(10)
+        .size([width, height]);
+
+    // Generador de paths para los links.
+    var path = sankey.link();
+
+
+    // Lectura de los datos desde un fichero JSON.
+    d3.json("sankeyData.json", function(sankeyData) {
+
+      // Aplicación del layout a los datos.
+      sankey
+          .nodes(sankeyData.nodes)
+          .links(sankeyData.links)
+          .layout(32);
+      console.log(sankeyData);
+
+      // Dibujamos los enlaces
+      var link = svg.append("g").attr("id", "links").selectAll(".link")
+          .data(sankeyData.links)
+
+      link.enter()
+          .append("path")
+          .attr("class", function(d){return "link "+d.source.name+" "+d.target.name;})
+          .attr("d", path)
+          .style("stroke-width", function(d) { return Math.max(1, d.dy); })
+          .sort(function(a, b) { return b.dy - a.dy; })
+          .attr("title", function(d) { return d.source.name + " → " + d.target.name + "  " + format(d.value); });
+
+      var fontScale = d3.scale.log()
+                              .domain(d3.extent(sankeyData.nodes, function (d) { return d.sourceLinks.length+d.targetLinks.length;}))
+                              .range([10, 40])
+                              .clamp(true);
+
+      // Dibujamos los nodos.
+      var node = svg.append("g").attr("id","nodes").selectAll(".node")
+          .data(sankeyData.nodes);
+
+      node.enter().append("g")
+          .attr("class", "node")
+          .attr("transform", function(d) {return "translate(" + d.x + "," + d.y + ")"; })
+        .call(d3.behavior.drag()
+          .origin(function(d) { return d; })
+          .on("dragstart", function() { this.parentNode.appendChild(this); })
+          .on("drag", dragmove));
+
+      node.append("rect")
+          .attr("height", function(d) { return d.dy; })
+          .attr("width", sankey.nodeWidth())
+          .on("mouseover",function(d){svg.selectAll("."+d.name).classed("on",true)})
+          .on("mouseout",function(d){svg.selectAll("."+d.name).classed("on",false)})
+          .style("fill", function(d) { return d.color = color(d.name.replace(/ .*/, "")); })
+          .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
+        .append("title")
+          .text(function(d) { return d.name + "\n" + format(d.value); });
+
+      node.append("text")
+          .attr("x", -6)
+          .attr("y", function(d) { return d.dy / 2; })
+          .attr("text-anchor", "end")
+          .html(function(d) { return d.name + "\n" + d.value; })
+          .style("font-size",function(d){
+              return fontScale(d.sourceLinks.length+d.targetLinks.length);
+          })
+        .filter(function(d) { return d.x < width / 2; })
+          .attr("x", 6 + sankey.nodeWidth())
+          .attr("text-anchor", "start");
+
+      function dragmove(d) {
+        d3.select(this).attr("transform", "translate(" + d.x + "," + (d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))) + ")");
+        sankey.relayout();
+        link.attr("d", path);
+      }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+
+        var matrix = [
+          [ 10,  20, 30, 40],
+          [ 30, 300, 5, 100],
+          [ 80, 140, 90, 80],
+          [ 101, 99, 94, 69],
+        ];
+
+        // Iniciazión del layout.
+        var chord = d3.layout.chord()
+            .padding(.05);
+
+        // Aplicación del layout a los datos.
+        chord.matrix(matrix);
+
+        // Geometría.
+        var width = 960,
+            height = 500,
+            innerRadius = Math.min(width, height) * .41,
+            outerRadius = innerRadius * 1.1;
+
+        var colorScale = d3.scale.category10()
+            .domain(d3.range(matrix.length));
+
+        // Generador de arcos
+        var arc = d3.svg.arc()
+                        .innerRadius(innerRadius)
+                        .outerRadius(outerRadius);
+
+        // Añadir etiqueta SVG.
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+          .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+
+        console.log(chord);
+
+        // Para cada grupo calculado por el layout dibujaremos un arco.
+        var groups = svg.append("g").selectAll("path")
+            .data(chord.groups);
+
+        groups.enter()
+              .append("path")
+              .attr("class",function(d){return "tick ID"+d.index;})
+              .style("fill", function(d) { return colorScale(d.index); })
+              .style("stroke", function(d) { return colorScale(d.index); })
+              .attr("d", arc);
+
+        // Dibujamos las etiquetas que identifican a cada grupo.
+        var ticks = svg.append("g")
+                       .selectAll("g")
+                       .data(chord.groups);
+
+        ticks.enter().append("g")
+            .attr("transform", function(d) {
+                return "rotate(" + ((d.startAngle) * 180 / Math.PI - 90) + ")" // En el ángulo inicial del arco dibujaremos la etiqueta.
+                  + "translate(" + outerRadius + ",0)";
+
+                });
+
+        ticks.append("text")
+            .attr("x", 8)
+            .attr("dy", ".35em")
+            .attr("transform", function(d) { return d.startAngle > Math.PI ? "rotate(180)translate(-16)" : null; })
+            .style("text-anchor", function(d) { return d.startAngle > Math.PI ? "end" : null; })
+            .text(function(d) { return d.index; });
+
+        // Dibujamos las cuerdas.
+        var cuerdas = svg.append("g")
+                         .attr("class", "chord")
+                         .selectAll("path")
+                         .data(chord.chords);
+
+        cuerdas.enter()
+               .append("path")
+               .attr("class",function(d){return "cuerda ID"+d.target.index+" ID"+d.source.index;})
+               .attr("d", d3.svg.chord().radius(innerRadius))
+               .style("fill", function(d) { return colorScale(d.target.index); })
+               .style("opacity", 1);
+
+    </script>
+</body>
+</html>

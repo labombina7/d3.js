@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>El Quijote otra vez</title>
+        <script type="text/javascript" src="d3.v3.js"></script>
+    </head>
+    <body>
+        <h1>El Quijote otra vez</h1>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script type="text/javascript">
+        var quijoteTam=[
+            {
+                texto:"En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.",
+                tamanyo:"12px"},
+            {
+                texto: "Una olla de algo más vaca que carnero, salpicón las más noches, duelos y quebrantos los sábados, lentejas los viernes, algún palomino de añadidura los domingos, consumían las tres partes de su hacienda.",
+                tamanyo:"15px"},
+            {
+                texto:" El resto della concluían sayo de velarte, calzas de velludo para las fiestas con sus pantuflos de lo mismo, los días de entre semana se honraba con su vellori de lo más fino.",
+                tamanyo:"18px"}
+            ];
+        // Insertar en una sola linea los tres parrafos con sus tres textos+tamaños de fuente correspondientes
+
+        d3.select("body").selectAll("p")
+            .data(quijoteTam)
+            .enter()
+            .append("p")
+            .html(function(d,i){return d.texto;})
+            .style("font-size",function(d){return d.tamanyo})
+            .on("click",function(d){console.log(d);})
+            .on("mouseover",function(d){d3.select("#ID"+parseInt(Math.random()*3)).style("color","red");console.log(d);})
+            .attr("id",function(d,i){return "ID"+i;})
+            .transition()
+            .duration(3000)
+            .style("font-size",function(d){return d.tamanyo*2;})
+        </script>
+    </body>
+</html>

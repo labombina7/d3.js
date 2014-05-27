@@ -1,0 +1,41 @@
+body
+{
+    background-color:black;
+    color:white;
+}
+
+
+.word1 .cloudText{
+    font-family: Impact;
+    fill: #CA3;
+}
+
+.word2 .cloudText{
+    font-family: American Typewriter;
+    fill: #CAA;
+}
+
+.word3 .cloudText{
+    font-family: Arial;
+    fill: #335;
+}
+
+.word4 .cloudText{
+    font-family: Impact;
+    fill: #AAA;
+}
+
+.word5 .cloudText{
+    font-family: Impact;
+    fill: #CA3;
+}
+
+.word6 .cloudText{
+    font-family: Impact;
+    fill: #CA3;
+}
+
+.word7 .cloudText{
+    font-family: Impact;
+    fill: #CA3;
+}

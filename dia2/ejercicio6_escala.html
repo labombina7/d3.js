@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>El Quijote otra vez</title>
+        <script type="text/javascript" src="d3.v3.js"></script>
+    </head>
+    <body>
+        <h1>El Quijote otra vez</h1>
+        <script type="text/javascript">
+
+        var quijoteTam=[
+            {texto:"En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.",tamanyo:6},
+            {texto: "Una olla de algo más vaca que carnero, salpicón las más noches, duelos y quebrantos los sábados, lentejas los viernes, algún palomino de añadidura los domingos, consumían las tres partes de su hacienda.",tamanyo:15},
+            {texto:" El resto della concluían sayo de velarte, calzas de velludo para las fiestas con sus pantuflos de lo mismo, los días de entre semana se honraba con su vellori de lo más fino.",tamanyo:18}
+            ];
+
+        //Añadido
+        var sizeScale = d3.scale.sqrt().domain([0,20]).range([40,70]);
+
+        // Insertar en una sola linea los tres parrafos con sus tres textos+tamanyos de fuente correspondientes.
+
+        d3.select("body").selectAll("p").data(quijoteTam)
+            .enter()
+            .append("p")
+            .html(function(d,i){return d.texto;})
+            .style("font-size",function(d,i){return sizeScale(d.tamanyo)+"px";})
+            .transition().duration(2000).style("color","red");
+
+
+        </script>
+    </body>
+</html>

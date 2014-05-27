@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>RandomNumbers - Circles</title>
+<style>
+    body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: auto;
+        position: relative;
+        width: 960px;
+    }
+    .barras
+    {
+        fill: #000;
+    }
+    .barrasOn
+    {
+        fill: #F00;
+    }
+
+</style>
+<script src="d3.v3.js"></script>
+<body>
+    <div style="margin-top:50px;">
+        <a href="#" id="primero">Primer Dataset</a><br>
+        <a href="#" id="segundo">Segundo Dataset</a><br>
+    </div>
+
+
+    <script>
+
+        var width = 960,
+            height = 500;
+            margin = 50;
+
+        var numbers = [0, 4, 3, 1, 4, 1, 4, 3, 2, 1];
+        var numbersSecond = [4, 2, 0, 1, 2, 4, 3, 2, 0, 0];
+
+        var xScale = d3.scale.linear().domain([0,numbers.length]).range([margin,width-margin]).clamp(true);
+        var hScale = d3.scale.linear().domain([0,d3.max(ttData, function(element){return element.score;})])
+                        .range([5,100]).clamp(true);
+        var color = d3.scale.linear().domain([0,d3.max(numbers)]).range(["#ccc", "#000"]);
+
+        var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+        renderBars(numbers);
+
+        d3.select("#primero").on("click",function(){renderBars(numbers);return false;});
+        d3.select("#segundo").on("click",function(){renderBars(numbersSecond);return false;});
+
+
+        function renderBars(data)
+        {
+
+            var myBars = svg.selectAll("rect").data(data);
+            var myText = svg.selectAll("text").data(data);
+
+            myBars.transition().duration(2000)
+                .attr("height",function(d,i){return hScale(d);})
+                .attr("y", function(d,i){return height/2 -  hScale(d);})
+                .style('fill', function(d,i){return color(d);})
+
+            myText.transition().duration(2000)
+                .attr("y", function(d,i){return (height/2 -  hScale(d))-10;})
+                .text(function(d,i){return d;})
+                .style('fill', function(d,i){return color(d);})
+
+            myText.enter().append('text')
+                          .attr("x", function(d,i){return xScale(i)+15;})
+                          .attr("y", function(d,i){return (height/2 -  hScale(d))-20;})
+                          .text(function(d,i){return d;})
+                          .style('fill', function(d,i){return color(d);})
+
+            myBars.enter().append("rect")
+                    .attr("x", function(d,i){return xScale(i);})
+                    .attr("y", function(d,i){return height/2 -  hScale(d);})
+                    .attr("width",function(d,i){return ((width-2*margin)/data.length)/2.0;})
+                    .attr("height",function(d,i){return hScale(d);})
+                    .attr("class","barras")
+                    .on("mouseover", function(d,i){d3.select(this).classed("barrasOn", true);})
+                    .on("mouseout", function(d,i){d3.select(this).classed("barrasOn",false);})
+                    .style('fill', function(d,i){return color(d);})
+
+
+
+        }
+
+    </script>

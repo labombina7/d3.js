@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WordCloud</title>
+
+
+    <!-- Estilos -->
+<style>
+    body
+    {
+        background-color:black;
+        color:white;
+    }
+    .cloudText{
+    font-family: Impact;
+    font: 20px;
+    fill: #CA3;
+    }
+
+
+</style>
+
+    <!-- JS's -->
+
+    <script src="d3.v3.js" type="text/javascript"></script>
+    <script type="text/javascript" src="d3.layout.cloud.js"></script>
+    <script src="jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script src="wordCloud.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+<div id="options">
+    <form>
+    <label><input type="radio" name="dataSwitch" value="1" checked>1</label>
+    <label><input type="radio" name="dataSwitch" value="2">2</label>
+    <label><input type="radio" name="dataSwitch" value="3">3</label>
+    <label><input type="radio" name="dataSwitch" value="4">4</label>
+    <label><input type="radio" name="dataSwitch" value="5">5</label>
+    <label><input type="radio" name="dataSwitch" value="6">6</label>
+    <label><input type="radio" name="dataSwitch" value="7">7</label>
+    <label><input type="radio" name="dataSwitch" value="8">8</label>
+    </form>
+</div>
+<div id="wordParent" class="word" style="margin-top:30px;"></div>
+    <script>
+
+        console.log(outliers);
+        var fontScale = d3.scale.linear().domain([0,1]).range([5, 60]);
+
+
+        d3.json("lazarillo.json",function(orig_words){
+
+
+
+            var wordObj = outliers.viz.wordCloud(
+                    {
+                        'idName':"wordParent",
+                        'width': 400,
+                        'height':400,
+                        'fontScale': fontScale
+                    });
+
+            wordObj.render(orig_words[1]);
+
+
+            $('input[name="dataSwitch"]').change(function(){
+
+                var key = this.value;
+
+                wordObj.render(orig_words[key]);
+
+            });
+
+        });
+
+
+    </script>
+</body>
+</html>

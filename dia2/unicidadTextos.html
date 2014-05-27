@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Unicidad</title>
+
+    <!-- JS's -->
+
+    <script src="d3.v3.js"></script>
+
+</head>
+<body>
+    <div id="controls">
+        <input type="text" id="wordsBox" size="50">
+        <input type="button" onclick="draw()" value="Draw">
+    </div>
+    <div id="joinsParent"></div>
+        <script>
+            var width = 1000,
+                height = 500;
+
+
+            var svg = d3.select("#joinsParent").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            var g1 = svg.append("g");
+            var g2 = svg.append("g").attr("transform","translate(0,100)");
+
+            function draw(){
+
+                var words_str = document.getElementById("wordsBox").value;//$('input#wordsBox').val().trim();
+                console.log(words_str);
+
+                words = words_str.split(/\s+/);
+                //console.log(words)
+
+                var entries = g1.selectAll("text").data(words,function(d,i){return i;})
+
+                entries.transition()
+                    .duration(2000)
+                    .attr("transform",function(d,i){return "translate("+((width/(words.length))*i)+",50)";})
+                    .text(function(d){return d;});
+
+                entries.enter()
+                    .append("text")
+                    .attr("transform",function(d,i){console.log("ENTER1");return "translate("+((width/(words.length))*i)+",50)";})
+                    .text(function(d){return d;})
+                    .style("opacity",1e-6)
+                    .transition()
+                    .duration(1000)
+                    .style("opacity", 1.0);
+
+                entries.exit().transition().duration(2000).style("opacity",1e-6).remove();
+
+
+                var entries2 = g2.selectAll("text").data(words,function(d,i){return d;})
+                console.log(entries2);
+
+                entries2.transition()
+                    .duration(2000)
+                    .attr("transform",function(d,i){return "translate("+((width/(entries2[0].length))*i)+",100)";})
+                    .text(function(d){return d;});
+
+                entries2.enter()
+                    .append("text")
+                    .attr("transform",function(d,i){console.log("ENTER2");return "translate("+((width/(entries2[0].length))*i)+",100)";})
+                    .text(function(d){return d;})
+                    .style("opacity",1e-6)
+                    .transition()
+                    .duration(1000)
+                    .style("opacity", 1.0);
+
+                entries2.exit().transition().duration(2000).style("opacity",1e-6).remove();;
+
+
+            }
+
+    </script>
+</body>
+</html>

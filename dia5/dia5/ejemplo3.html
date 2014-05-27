@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            /* Código CSS */
+        </style>
+    </head>
+    <body>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="http://d3js.org/queue.v1.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <script>
+            /* Código JavaScript */
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", 1200)
+                        .attr("height", 700);
+            d3.json("json/es.json", function (error, es) {
+                var projection = d3.geo.mercator();
+                var path = d3.geo.path()
+                                 .projection(projection);
+                svg.selectAll("path")
+                   .data(topojson.feature(es, es.objects.subunits).features)
+                   .enter()
+                   .append("path")
+                   .attr("d", path);
+                var punto = {
+                    "latitude": 40.4165000,
+                    "longitude": -3.7025600
+                };
+                svg.selectAll("punto")
+                   .data([punto])
+                   .enter()
+                   .append("circle")
+                   .attr("cx", function (d) { return projection([d.longitude, d.latitude])[0]; })
+                   .attr("cy", function (d) { return projection([d.longitude, d.latitude])[1]; })
+                   .attr("r", 3)
+                   .style("fill", "yellow");
+            });
+        </script>
+    </body>
+</html>

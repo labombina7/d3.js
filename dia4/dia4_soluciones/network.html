@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Network</title>
+<style>
+
+
+.node
+{
+    fill: #000;
+    cursor: pointer;
+}
+.link
+{
+    stroke:#000;
+}
+
+</style>
+
+    <!-- JS's -->
+
+    <script src="d3.v3.js"></script>
+
+</head>
+<body>
+
+<div id="networkParent"></div>
+    <script>
+
+        var width = window.innerWidth,
+            height = window.innerHeight;
+
+        var color = d3.scale.category20();
+
+        var force = d3.layout.force()
+            .charge(-120)
+            .linkDistance(40)
+            .size([width, height]);
+
+        var svg = d3.select("#networkParent")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("pointer-events", "all")
+                    .call(d3.behavior.zoom().on("zoom", redraw))
+                    .append("g");
+
+        function redraw(){
+            svg.attr("transform",
+                     "translate(" + d3.event.translate + ")"
+                     + " scale(" + d3.event.scale + ")");
+        };
+
+
+        d3.json('wiki_network.json',function(data){
+
+            console.log(data);
+
+            var nodes = data['nodes'];
+            var links = data['edges'];
+            console.log(nodes);
+            console.log(links);
+            force
+                .nodes(nodes)
+                .links(links)
+                .start();
+
+            var link = svg.selectAll(".link")
+                .data(links,function(d){return d.source.name+'-'+d.target.name;});
+
+            link.enter().append("line")
+                .attr("class", function(d){return "link "+d.source.name+" "+d.target.name});
+
+            var node = svg.selectAll(".node")
+                .data(nodes,function(d){return d.name});
+
+            node.enter()
+                .append("g");
+
+            node.append("circle")
+                .attr("r", function(d) { return d.weight;})
+
+            node.append("text")
+                .attr("class", function(d){return "node "+d.name;})
+                .style("font-size",function(d){return d.weight*4;})
+                .text(function(d){return d.name;})
+                .call(force.drag);
+
+            force.on("tick", function() {
+              link.attr("x1", function(d) { return d.source.x; })
+                  .attr("y1", function(d) { return d.source.y; })
+                  .attr("x2", function(d) { return d.target.x; })
+                  .attr("y2", function(d) { return d.target.y; });
+
+              node.attr("transform", function(d) { return "translate("+d.x+","+d.y+")"; })
+            });
+        });
+
+    </script>
+</body>
+</html>

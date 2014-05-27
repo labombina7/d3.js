@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            /* Código CSS */
+        </style>
+    </head>
+    <body>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="http://d3js.org/queue.v1.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <script>
+            /* Código JavaScript */
+            var projection = d3.geo.mercator();
+            var punto = {
+                "latitude": 40.4165000,
+                "longitude": -3.7025600
+            };
+            var x = projection([punto.longitude, punto.latitude])[0];
+            var y = projection([punto.longitude, punto.latitude])[1];
+            console.log(x);
+            console.log(y);
+        </script>
+    </body>
+</html>

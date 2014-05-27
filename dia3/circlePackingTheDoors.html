@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CirclePacking</title>
+
+<style>
+
+
+body
+{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: auto;
+    background-color: #FFF;
+    font-weight: 400;
+}
+
+circle {
+  fill: #000;
+  fill-opacity: .25;
+  stroke: #777;
+}
+
+.final circle{
+  fill: #000;
+  fill-opacity: 1;
+  stroke: #000;
+}
+
+text {
+  cursor: default;
+  fill: #FFF;
+  pointer-events: none;
+}
+.tooltip{
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    padding: 8px;
+    font: 15px Helvetica Neue;
+    background: #FFF;
+    border: solid 1px #aaa;
+    border-radius: 8px;
+    pointer-events: none;
+    z-order:1000;
+    text-align:center;
+}
+
+</style>
+
+    <!-- JS's -->
+
+    <script src="d3.v3.js"></script>
+
+</head>
+<body>
+
+<div id="circlePackingParent"></div>
+    <script>
+
+        var diameter = window.innerHeight;
+
+        // Inicialización del layout de circle packing
+        var pack = d3.layout.pack()
+                            .size([diameter, diameter]) // Definimos el tamaño de la visualización [ancho, alto]
+                            .value(function(d) { return d.size; }); // Definimos el valor que determinará el tamaño de cada dato individual.
+
+        // Creamos el elemento SVG.
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", diameter)
+                    .attr("height", diameter)
+                    .on("mousemove", mousemove)
+                    //.call(d3.behavior.zoom().on("zoom", redraw))
+                    .append("g");
+
+        // Añadimos un DIV al body que utilizaremos como tooltip.
+        var tooltip =  d3.select("body")
+                         .append("div")
+                         .attr("id","tooltip")
+                         .html("")
+                         .attr("class", "tooltip")
+                         .style("opacity", 0);
+
+
+        // Función para gestionar el movimiento tooltip.
+        function mousemove()
+        {
+            tooltip
+                .style("left", (d3.event.pageX +20) + "px")
+                .style("top", (d3.event.pageY - 12) + "px");
+        }
+
+        // Función para gestionar el zoom y el pannning.
+        function redraw()
+        {
+            self.svg.attr("transform",
+                          "translate(" + d3.event.translate + ")"
+                          + " scale(" + d3.event.scale + ")");
+        }
+
+        // Cargo los datos desde un fichero JSON
+        d3.json("thedoors.json",function(data){
+            // Añados los datos al layout definido anteriormente para que me genere
+            // la estructura modificada de los datos.
+            var leaves = pack(data);
+
+            console.log(leaves);
+
+            // Selecciono los nodos y hago "binding" con los datos modificados.
+            var node = svg.selectAll('.node')
+                  .data(leaves,function(d){return d.name});
+
+            // Gestión de los nuevos datos
+            node.enter()
+                .append("g") // Añado un contenedor por dato a representar.
+                .attr("class",function(d,i){ // Según sea una hoja o no, le asignaré una clase o otra
+                    if(d.children){return "node";}
+                    else{return "final node";}
+                })
+                .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; }); // Traslado el contenedor a la posición calculada por el layout.
+
+
+            node.append("circle") // Para cada dato, añado a su contenedor un círculo.
+                .attr("r", function(d) { return d.r; }) // Con el radio calculado por el layout.
+                .on("mouseover",function(d){
+                                    tooltip.style("opacity",1.0).html(d.name);
+                                    //d3.select(this).style("fill","red");
+                         })
+                 .on("mouseout",function(d){
+                                    tooltip.style("opacity",0.0);
+                                    //d3.select(this).style("fill","black");
+                         });
+
+            node.append("text") // Para cada dato, añado a su contenedor un texto a modo de etiqueta.
+                .attr("text-anchor","middle")
+                .style("fill-opacity",0)
+                .style("font-size","2px")
+                .text(function(d){return (!d.children ? d.name : "");})
+            .transition()
+            .duration(1000)
+                .style("fill-opacity",1.0)
+                .style("font-size", function(d) {return ((2 * (d.r*8/10) ) / this.getComputedTextLength()) * 2 + "px"; });
+
+        });
+
+    </script>
+</body>
+</html>

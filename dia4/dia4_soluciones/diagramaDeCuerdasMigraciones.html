@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+    <style>
+    body {
+        font: 10px sans-serif;
+        }
+    .chord path {
+        fill-opacity: .67;
+        stroke: #000;
+        stroke-width: .5px;
+        }
+    .tooltip{
+        position: absolute;
+        padding: 8px;
+        font-family: Advent Pro, semi-bold;
+        font-weight: 400;
+        font: 10px sans-serif;
+        background: #FFF;
+        border: solid 1px #aaa;
+        border-radius: 8px;
+        pointer-events: none;
+        z-order:1000;
+    }
+
+    </style>
+<body>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+        var width = window.innerWidth,
+            height = window.innerHeight;
+
+        var transitionTime = 2500;
+
+        var old = {};
+
+        var colorScale = d3.scale.category20();
+
+        var tooltip = d3.select("body").append("div")
+                          .attr("id","tooltip")
+                          .html("")
+                          .attr("class", "tooltip")
+                          .style("opacity", 0);
+
+
+        // Añadimos la etiqueta SVG al árbol DOM.
+        var svg = d3.select("body").append("svg")
+            .attr("width",width)
+            .attr("height",height)
+            .on("mousemove", mousemove)
+            .append("g")
+            .attr("transform", "translate("+(width/2)+","+(height/2)+")");
+
+
+        // Contenedores para grupos, cuerdas y etiquetas.
+        var groups = svg.append("g");
+        var chords = svg.append("g");
+        var texts = svg.append("g");
+
+        // Geometría.
+        var chartWidth = (width)-(height/10);
+        var chartHeight = (height)-(height/10);
+        var innerRadius = Math.min(chartWidth, chartHeight) * .41;
+        var outerRadius = innerRadius * 1.1;
+
+        // Generadores de arcos y cuerdas.
+        var arc_svg = d3.svg.arc()
+                            .innerRadius(innerRadius)
+                            .outerRadius(outerRadius);
+        var chord_svg = d3.svg.chord()
+                              .radius(innerRadius);
+
+        // Inicialización de layout
+        var chord = d3.layout.chord()
+                             .padding(0.1)
+                             .sortSubgroups(d3.ascending)
+                             .sortChords(d3.ascending);
+
+        console.log("LEO");
+        // Cargamos los datos desde un fichero JSON.
+        d3.json("matrixData.json",function(chordData){
+            console.log(chordData);
+            render(chordData.data,chordData.datalabel);
+        });
+        console.log("LEIDO");
+
+
+    function render(data,datalabel)
+    {
+        console.log("RENDER");
+        console.log(datalabel);
+        data = data;
+        datalabel = datalabel;
+
+        // Aplicamos el layout a los datos.
+        chord.matrix(data[1990]);
+        console.log(chord.groups());
+
+        // Hacemos binding de los datos y los elementos en el árbol DOM de grupos, etiquetas y cuerdas.
+        var groupsBind = groups.selectAll(".groups")
+                               .data(chord.groups);
+        var textBind = texts.selectAll(".chordLegendText")
+                            .data(chord.groups,function (d,i){return d.index;});
+        var chordsBind = chords.selectAll(".chords")
+                               .data(chord.chords,function(d,i){return getStringRepr(d.source.index, d.target.index);});
+
+
+        // Gestión de las etiquetas asociados a datos que desaparecen.
+        textBind.exit()
+                .transition()
+                .duration(transitionTime)
+                .remove();
+
+        // Gestión de las etiquetas asociadas a datos que se mantienen/mutan.
+        textBind.transition()
+                .duration(transitionTime)
+                .attr("transform", function(d) {
+                    return "rotate(" + ( (d.startAngle + (d.endAngle - d.startAngle)/2) * 180 / Math.PI -90) + ")"
+                           + "translate(" + (outerRadius + 16) + ")";
+                });
+
+        // Gestión de las etiquetas asociadas a datos nuevos.
+        textBind.enter()
+                .append("text")
+                .attr("dy", ".35em")
+                .attr("class","chordLegendText")
+                .attr("transform", function(d) {
+                    return "rotate(" + ( (d.startAngle + (d.endAngle - d.startAngle)/2) * 180 / Math.PI -90) + ")"
+                        + "translate(" + (outerRadius + 16) + ")";
+                })
+                .text(function(d){return datalabel.countries[d.index];});
+
+
+        // Gestión de los arcos asociados a datos que desaparecen
+        groupsBind.exit()
+                  .transition()
+                  .duration(transitionTime)
+                  .remove();
+
+        // Gestión de los arcos asociados a datos que se mantienen/mutan.
+        groupsBind.transition()
+            .duration(transitionTime)
+            .attrTween("d", arcTween(arc_svg, old));
+
+        // Gestión de los arcos asociados a datos nuevos.
+        groupsBind.enter()
+                  .append("path")
+                  .attr("class","groups")
+                  .style("fill", function(d) {return colorScale(d.index); })
+                  .style("stroke", function(d) { return "#000"; })
+                  .attr("d", arc_svg)
+                  .on("mouseover", fadeOut(datalabel,0.1))
+                  .on("mouseout", fadeIn(1));
+
+
+        // Gestión de las cuerdas que desaparecen.
+        chordsBind.exit()
+                  .transition()
+                  .duration(transitionTime)
+                  .style("opacity", 0)
+                  .remove();
+
+        // Gestión de las cuerdas que se mantienen/mutan.
+        chordsBind.transition()
+                  .duration(transitionTime)
+                  .style("fill", function(d,i) {return colorScale(d.target.index);})
+                  .style("opacity",1)
+                  .attrTween("d", chordTween(chord_svg, old));
+
+        // Gestión de las cuerdas nuevas.
+        chordsBind.enter()
+            .append("path")
+            .attr("class","chords")
+            .attr("d", chord_svg)
+            .style("fill", function(d) {return colorScale(d.target.index); })
+            .style("opacity", 0.1)
+            .on("mouseover", function(d,i){rellenaInfoChord(data[1990],datalabel,d.source,d.target);})
+            .on("mouseout",function(d,i){clearInfoChord();})
+            .transition()
+            .each("start",function()
+                {
+                    onTransition = true;
+                }
+            )
+            .duration(transitionTime)
+            .style("opacity",1)
+            .each("end",function()
+            {
+                onTransition = false;
+                old = {
+                    groups: chord.groups(),
+                    chords: chordsRepr(chord.chords())
+                };
+            });
+
+        }
+
+    // Funcion para la interpolación de arcos.
+    function arcTween(arc_svg, old) {
+        return function(d,i) {
+            var i = d3.interpolate(old.groups[i], d);
+            return function(t) {
+                return arc_svg(i(t));
+            }
+        }
+    }
+
+    // Función para la interpolación de cuerdas.
+    function chordTween(chord_svg, old) {
+        return function(d,i) {
+            var oldStrRepr = getStringRepr(d.source.index, d.target.index);
+            var i = d3.interpolate(old.chords[oldStrRepr], d);
+            return function(t) {
+                return chord_svg(i(t));
+            }
+        }
+    }
+
+    // Funcion para dejar de destacar cuerdas.
+    function fadeIn(opacity) {
+        return function (d, i) {
+            clearInfoGroup();
+            svg.selectAll(".chords")
+                .filter(function(d) { return d.source.index != i && d.target.index != i; })
+                .transition()
+                .ease('elastic')
+                .duration(transitionTime)
+                .style("opacity", opacity);
+        };
+    }
+
+    // Función para destacar las cuerdas de un grupo al poner el ratón sobre él.
+    function fadeOut(datalabel,opacity) {
+        return function (d, i) {
+            rellenaInfoGroup(datalabel,d);
+            svg.selectAll(".chords")
+                .filter(function(d) { return d.source.index != i && d.target.index != i; })
+                .transition()
+                .ease('elastic')
+                .duration(transitionTime)
+                .style("opacity", opacity);
+        };
+    }
+
+    // Función para crear IDs únicos.
+    function getStringRepr(i,j)
+    {
+        return (i>j) ? i.toString()+"*"+ j.toString(): j.toString()+"*"+ i.toString();
+    }
+
+
+    // Función para rellenar la información del tooltip sobre una cuerda.
+    function rellenaInfoChord(data,datalabel,sourceCountryISO,targetCountryISO){
+        console.log(data)
+        var sourceCountryAux = datalabel.countries_data[sourceCountryISO.index];
+        var targetCountryAux = datalabel.countries_data[targetCountryISO.index];
+        var movementAux = datalabel.movements_data[1990][datalabel.countries[sourceCountryISO.index]][datalabel.countries[targetCountryISO.index]];
+        var html = 'From '+sourceCountryAux.longName+"(HDI: "+sourceCountryAux.HDI+") to "+targetCountryAux.longName+"(HDI: "+targetCountryAux.HDI+"): "+data[sourceCountryISO.index][targetCountryISO.index]+" migrants <br>From "+targetCountryAux.longName+"(HDI: "+targetCountryAux.HDI+") to "+sourceCountryAux.longName+"(HDI: "+sourceCountryAux.HDI+"): "+data[targetCountryISO.index][sourceCountryISO.index]+" migrants<br>Same lang: "+movementAux.sameLanguage+'<br>Distance: '+parseFloat(movementAux.distance).toFixed(2)+'<br>Same currency: '+movementAux.sameCurrency;
+        d3.select(".tooltip").style("opacity",1).html(html);
+    };
+
+    // Función para rellenar la info del tooltip sobre un grupo.
+    function rellenaInfoGroup(datalabel,countryISO){
+        var countryAux = datalabel.countries_data[countryISO.index];
+        var html = countryAux.longName+'<br>HDI: '+parseFloat(countryAux.HDI).toFixed(2)+'<br>Pop: '+countryAux.Population;
+        d3.select(".tooltip").style("opacity",1).html(html);
+    };
+
+    // Vaciar el tooltip.
+    function clearInfoGroup(){
+        d3.select(".tooltip").style("opacity",0).html("");
+    };
+
+    // Vaciar el tooltip.
+    function clearInfoChord(){
+        d3.select(".tooltip").style("opacity",0).html("");
+    };
+
+    // Función para gestionar la posición del tooltip.
+    function mousemove()
+    {
+        tooltip
+            .style("left", (d3.event.pageX +20) + "px")
+            .style("top", (d3.event.pageY - 12) + "px");
+    };
+
+    // Función para la gestión de cuerdas.
+    function chordsRepr(chords)
+    {
+        var repr = [];
+
+        for(var i=0;i<chords.length;i++)
+        {
+            var stringRepr = getStringRepr(chords[i].source.index,chords[i].target.index);
+            repr[stringRepr] = chords[i];
+        }
+        return repr;
+    }
+    </script>
+    </body>
+</html>

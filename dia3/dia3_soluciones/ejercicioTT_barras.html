@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Ranking de Trending Topics</title>
+        <style>
+            body {
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                margin: auto;
+                position: relative;
+                width: 960px;
+                background-color: #000;
+                font-weight: 200;
+            }
+
+            .tt
+            {
+                font-family: "American Typewriter";
+                font-size: 20px;
+                fill: #FFF;
+                font-weight: 400;
+
+            }
+
+            h1
+            {
+                font-size: 40px;
+                font-weight: 200;
+                color: #FFC100;
+            }
+
+            a{
+                text-decoration: none;
+                color: #AAA;
+            }
+
+            a:hover
+            {
+                text-decoration: underline;
+            }
+            .on
+            {
+                color: #FFF;
+            }
+
+
+        </style>
+        <script src="d3.v3.js"></script>
+    </head>
+    <body>
+        <h1>Trending Topics 2012</h1>
+        <div style="margin-top:50px;float:left;">
+            <a href="#" class="mes" id="enero">Enero</a><br>
+            <a href="#" class="mes" id="febrero">Febrero</a><br>
+            <a href="#" class="mes" id="marzo">Marzo</a><br>
+        </div>
+
+        <script>
+
+            var hScale = d3.scale.linear()
+                                 .range([5,400])
+                                 .clamp(true);
+            var colorScale = d3.scale.ordinal()
+                                     .range(["red","yellow","green","white"])
+                                     .domain(["popular","estacional","sucesos","social"]);
+
+            // Geometria
+            var width = 900,
+                height = 500;
+                margin = {top: 70, left: 100, right: 50, bottom: 50};
+                rankingHeight = 300;
+
+            // Declaracion svg
+            var svg = d3.select("body").append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .style("float","left")
+                    .append("g")
+                    .attr("transform", "translate("+(margin.left)+","+(margin.top)+")");
+
+
+            // Cargamos los datos desde un JSON
+            d3.json("ttData.json",function(jsonData){
+                console.log("DATA");
+                console.log(jsonData);
+
+                var ttData = jsonData;
+
+                // Seleccion de enero al entrar
+                d3.select("#enero").classed("on",true);
+                var xScale = d3.scale.linear()
+                                     .domain([0,10])
+                                     .range([0,width-margin.right]).clamp(true);
+                renderRanking(ttData['enero']);
+
+                // Callback que gestiona el click de cambio de mes
+                d3.selectAll(".mes").on("click",function(){
+                    d3.selectAll(".mes").classed("on",false);
+                    d3.select(this).classed("on",true);
+                    renderRanking(ttData[d3.select(this).attr("id")]);
+                    return false;
+                });
+
+                // Pinta ranking de palabras
+                function renderRanking(data)
+                {
+                    console.log(data);
+                    hScale.domain(d3.extent(data, function(d) {return +d.score;}));
+                    // exit, update, enter
+                    var hashTags = svg.selectAll(".barras")
+                                      .data(data,function(d,i){console.log(d.name);return d.name;});
+
+                    hashTags.exit()
+                            .transition()
+                            .duration(2000)
+                            .style("opacity",function(d){console.log("EXIT");return 0;})
+                            .remove();
+
+                    hashTags.transition()
+                            .ease("cubic-in-out") // https://github.com/mbostock/d3/wiki/Transitions#d3_ease
+                            .duration(2000)
+                            .attr("x", function(d,i){console.log("SCALES");console.log(xScale(i));return xScale(i);})
+                            .attr("y", function(d,i){console.log(hScale(d.score));return height/2 -  hScale(d.score);})
+                            .attr("width",function(d,i){return ((width-margin.right)/data.length)/2.0;})
+                            .attr("height",function(d,i){return hScale(d.score);});
+
+
+                    hashTags.enter()
+                            .append("rect")
+                            .attr("width",0)
+                            .attr("height",0)
+                            .attr("x", function(d,i){console.log("ENTER");return xScale(i);})
+                            .attr("y", function(d,i){return height/2 -  hScale(d.score);})
+                            .style("fill",function(d){return colorScale(d.category);})
+                            .attr("class","barras")
+                            .transition().duration(2000)
+                            .attr("width",function(d,i){return ((width-margin.right)/data.length)/2.0;})
+                            .attr("height",function(d,i){return hScale(d.score);});
+                }
+            });
+
+        </script>
+
+    </body>
+</html>

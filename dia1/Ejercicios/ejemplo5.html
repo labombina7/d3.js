@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <title>El Quijote otra vez</title>
+        <style>
+            /* Código CSS */
+        </style>
+    </head>
+    <body>
+        <h1>El Quijote otra vez</h1>
+        <script src="../../d3.min.js"></script>
+        <script>
+          /* Código JavaScript */
+          var quijote=["En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.","Una olla de algo más vaca que carnero, salpicón las más noches, duelos y quebrantos los sábados, lentejas los viernes, algún palomino de añadidura los domingos, consumían las tres partes de su hacienda.","El resto della concluían sayo de velarte, calzas de velludo para las fiestas con sus pantuflos de lo mismo, los días de entre semana se honraba con su vellori de lo más fino.", "En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.","Una olla de algo más vaca que carnero, salpicón las más noches, duelos y quebrantos los sábados, lentejas los viernes, algún palomino de añadidura los domingos, consumían las tres partes de su hacienda.","El resto della concluían sayo de velarte, calzas de velludo para las fiestas con sus pantuflos de lo mismo, los días de entre semana se honraba con su vellori de lo más fino."];
+
+          var colors = ['red', 'blue'];
+          var colors2 = ['gray', 'yellow', 'orange'];
+
+          function render (myData){
+
+             var colorScale = d3.scale.linear().domain([0, 5]).range(["#777","red"]);
+             var colorScale2 = d3.scale.quantize().domain([0, 2]).range(colors2);
+
+             d3.select("body").selectAll("p")
+                 .data(myData)
+                 .enter()
+                 .append("p")
+                 .style("font-size","24px")
+                 .html(function(d,i){return d;})
+                 .style("color",function(d,i){return colorScale(i);})
+                 // .transition().duration(3000)
+                 // .style("color", function(d,i){return colorScale2(i);})
+                 // .style("font-size", function(d,i){return (i+1)*20+"px";})
+             }
+
+          render(quijote);
+
+        </script>
+    </body>
+</html>

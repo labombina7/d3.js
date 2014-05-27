@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>RandomNumbers - Circles</title>
+<style>
+    body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: auto;
+        position: relative;
+        width: 960px;
+    }
+    .circulos
+    {
+        fill: #000;
+    }
+    .circuloOn
+    {
+        fill: #F00;
+    }
+
+</style>
+<script src="d3.v3.js"></script>
+
+<body>
+    <div style="margin-top:50px;">
+        <a href="#" id="primero">Primer Dataset</a><br>
+        <a href="#" id="segundo">Segundo Dataset</a><br>
+    </div>
+
+    <script>
+
+        var width = 960,
+            height = 700,
+            margin = 50,
+            rows = 10,
+            gap = 50,
+            beginY = 100;
+
+        var numbers = [0, 4, 3, 1, 4, 1, 4, 3, 2, 1, 0, 1, 4, 3, 2, 3, 1, 9, 2, 5, 1, 3, 0, 5, 1, 4, 4, 3, 2, 1, 0, 0, 3, 3, 0, 2, 2, 8, 0, 3, 1, 2, 9, 4, 0, 1, 1, 4, 0, 0, 0, 0, 3, 1, 2, 4, 1, 5, 0, 1, 2, 2, 0, 0, 5, 1, 6, 6, 0, 6, 0, 1, 6, 3, 3, 1, 2, 7, 3, 2, 0, 4, 0, 3, 2, 0, 1, 3, 3, 1, 0, 0, 0, 3, 1, 1, 1, 6, 1, 2];
+        var numbersSecond = [4, 3, 1, 4, 1, 4, 3, 2, 1, 0, 1, 4, 3, 2, 3, 1, 9, 2, 5, 1, 3, 0, 5, 1, 4, 4, 3, 2, 1, 0, 0, 3, 3, 0, 2, 2, 8, 0, 3, 1, 2, 9, 4, 0, 1, 1, 4, 0, 0, 0, 0, 3, 1, 2, 4, 1, 5, 0, 1, 2, 2, 0, 0, 5, 1, 6, 6, 0, 6, 0, 1, 6, 3, 3, 1, 2, 7, 3, 2, 0, 4, 0, 3, 2, 0, 1, 3, 3, 1, 0, 0, 0, 3, 1, 1, 1, 6, 1, 2,0];
+
+
+        var xScale = d3.scale.linear().domain([0,numbers.length/rows]).range([margin,width-margin]).clamp(true);
+        var yScale = d3.scale.linear().domain([0,numbers.length/rows]).range([margin,height-margin]).clamp(true);
+
+        var rScale = d3.scale.sqrt().domain([0,10]).range([5,20]).clamp(true);
+        var colorScale = d3.scale.linear().domain([0,10]).range(["#CCC","#F00"]).clamp(true);
+        var opacityScale = d3.scale.linear().domain([0,10]).range([0.5,0.9]).clamp(true);
+
+        var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+
+        renderCircles(numbers);
+
+        d3.select("#primero").on("click",function(){renderCircles(numbers);return false;});
+        d3.select("#segundo").on("click",function(){renderCircles(numbersSecond);return false;});
+
+
+        function renderCircles(data)
+        {
+
+            myCircles = svg.selectAll("circle").data(data);
+
+            myCircles.enter().append("circle")
+                    .attr("cx", function(d,i){return xScale(i%(numbers.length/rows));})
+                    .attr("cy", function(d,i){return yScale(Math.floor(i/rows));})
+                    .attr("r",function(d,i){return rScale(d);})
+                    .style("fill",function(d,i){return colorScale(d);})
+                    .style("opacity",function(d,i){return opacityScale(d);})
+                    .attr("class","circulos")
+                    .on("mouseover", function(d,i){d3.select(this).classed("circuloOn", true);})
+                    .on("mouseout", function(d,i){d3.select(this).classed("circuloOn",false);});
+
+            myCircles.transition().duration(1500)
+                .attr("r",function(d,i){return rScale(d);})
+                .style("fill",function(d,i){return colorScale(d);})
+                .style("opacity",function(d,i){return opacityScale(d);})
+
+
+        }
+
+    </script>

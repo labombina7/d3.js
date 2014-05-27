@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <title>D3: Inserciones y encadenados</title>
+        <style>
+            /* Código CSS */
+            .grande {
+                font-size: 42px;
+            }
+            .masgrande {
+                font-size: 60px;
+            }
+        </style>
+    </head>
+    <body>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script>
+            /* Código JavaScript */
+            d3.select("body")
+              .append("p")
+              .text("Parrafo nuevo")
+              .attr("class", "masgrande");
+        </script>
+    </body>
+</html>

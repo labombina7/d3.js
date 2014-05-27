@@ -1,0 +1,418 @@
+{
+    "name": "TheDoors", 
+    "children": [
+        {
+            "name": "The Doors", 
+            "children": [
+                {
+                    "name": "Break On Through (To the Other Side)", 
+                    "size": 149
+                }, 
+                {
+                    "name": "Soul Kitchen", 
+                    "size": 215
+                }, 
+                {
+                    "name": "The Crystal Ship", 
+                    "size": 154
+                }, 
+                {
+                    "name": "Twentieth Century Fox", 
+                    "size": 153
+                }, 
+                {
+                    "name": "Alabama Song (Whisky Bar) (Bertolt Brecht, Kurt Weill)", 
+                    "size": 200
+                }, 
+                {
+                    "name": "Light My Fire", 
+                    "size": 426
+                }, 
+                {
+                    "name": "Back Door Man (Willie Dixon)", 
+                    "size": 214
+                }, 
+                {
+                    "name": "I Looked at You", 
+                    "size": 142
+                }, 
+                {
+                    "name": "End of the Night", 
+                    "size": 172
+                }, 
+                {
+                    "name": "Take It as It Comes", 
+                    "size": 143
+                }, 
+                {
+                    "name": "The End", 
+                    "size": 701
+                }
+            ]
+        }, 
+        {
+            "name": "Strange Days", 
+            "children": [
+                {
+                    "name": "Strange Days", 
+                    "size": 191
+                }, 
+                {
+                    "name": "You're Lost Little Girl", 
+                    "size": 183
+                }, 
+                {
+                    "name": "Love Me Two Times", 
+                    "size": 198
+                }, 
+                {
+                    "name": "Unhappy Girl", 
+                    "size": 122
+                }, 
+                {
+                    "name": "Horse Latitudes", 
+                    "size": 97
+                }, 
+                {
+                    "name": "Moonlight Drive", 
+                    "size": 185
+                }, 
+                {
+                    "name": "People Are Strange", 
+                    "size": 133
+                }, 
+                {
+                    "name": "My Eyes Have Seen You", 
+                    "size": 152
+                }, 
+                {
+                    "name": "I Can't See Your Face in My Mind", 
+                    "size": 206
+                }, 
+                {
+                    "name": "When the Music's Over", 
+                    "size": 658
+                }
+            ]
+        }, 
+        {
+            "name": "Waiting for the Sun", 
+            "children": [
+                {
+                    "name": "Hello, I Love You", 
+                    "size": 134
+                }, 
+                {
+                    "name": "Love Street", 
+                    "size": 173
+                }, 
+                {
+                    "name": "Not to Touch the Earth", 
+                    "size": 236
+                }, 
+                {
+                    "name": "Summer's Almost Gone", 
+                    "size": 202
+                }, 
+                {
+                    "name": "Wintertime Love", 
+                    "size": 114
+                }, 
+                {
+                    "name": "The Unknown Soldier", 
+                    "size": 203
+                }, 
+                {
+                    "name": "Spanish Caravan", 
+                    "size": 183
+                }, 
+                {
+                    "name": "My Wild Love", 
+                    "size": 181
+                }, 
+                {
+                    "name": "We Could Be So Good Together", 
+                    "size": 146
+                }, 
+                {
+                    "name": "Yes, the River Knows", 
+                    "size": 156
+                }, 
+                {
+                    "name": "Five to One", 
+                    "size": 266
+                }
+            ]
+        }, 
+        {
+            "name": "The Soft Parade", 
+            "children": [
+                {
+                    "name": "Tell All the People (Robby Krieger)", 
+                    "size": 201
+                }, 
+                {
+                    "name": "Touch Me (Krieger)", 
+                    "size": 192
+                }, 
+                {
+                    "name": "Shaman's Blues (Jim Morrison)", 
+                    "size": 289
+                }, 
+                {
+                    "name": "Do It (Morrison, Krieger)", 
+                    "size": 188
+                }, 
+                {
+                    "name": "Easy Ride (Morrison)", 
+                    "size": 163
+                }, 
+                {
+                    "name": "Wild Child (Morrison)", 
+                    "size": 156
+                }, 
+                {
+                    "name": "Runnin' Blue (Krieger)", 
+                    "size": 147
+                }, 
+                {
+                    "name": "Wishful Sinful (Krieger)", 
+                    "size": 178
+                }, 
+                {
+                    "name": "The Soft Parade (Morrison)", 
+                    "size": 516
+                }
+            ]
+        }, 
+        {
+            "name": "Morrison Hotel", 
+            "children": [
+                {
+                    "name": "Roadhouse Blues (Jim Morrison, The Doors)", 
+                    "size": 243
+                }, 
+                {
+                    "name": "Waiting for the Sun (Morrison)", 
+                    "size": 238
+                }, 
+                {
+                    "name": "You Make Me Real (Morrison)", 
+                    "size": 173
+                }, 
+                {
+                    "name": "Peace Frog (Morrison, Robby Krieger)", 
+                    "size": 171
+                }, 
+                {
+                    "name": "Blue Sunday (Morrison)", 
+                    "size": 133
+                }, 
+                {
+                    "name": "Ship of Fools (Morrison, Krieger)", 
+                    "size": 188
+                }, 
+                {
+                    "name": "Land Ho! (Morrison, Krieger)", 
+                    "size": 250
+                }, 
+                {
+                    "name": "The Spy (Morrison)", 
+                    "size": 257
+                }, 
+                {
+                    "name": "Queen of the Highway (Morrison, Krieger)", 
+                    "size": 167
+                }, 
+                {
+                    "name": "Indian Summer (Morrison, Krieger)", 
+                    "size": 156
+                }, 
+                {
+                    "name": "Maggie M'Gill (Morrison, The Doors)", 
+                    "size": 263
+                }
+            ]
+        }, 
+        {
+            "name": "L.A. Woman", 
+            "children": [
+                {
+                    "name": "The Changeling", 
+                    "size": 261
+                }, 
+                {
+                    "name": "Love Her Madly (Krieger)", 
+                    "size": 200
+                }, 
+                {
+                    "name": "Been Down So Long", 
+                    "size": 281
+                }, 
+                {
+                    "name": "Cars Hiss by My Window", 
+                    "size": 252
+                }, 
+                {
+                    "name": "L.A. Woman", 
+                    "size": 469
+                }, 
+                {
+                    "name": "L'America", 
+                    "size": 277
+                }, 
+                {
+                    "name": "Hyacinth House", 
+                    "size": 191
+                }, 
+                {
+                    "name": "Crawling King Snake (John Lee Hooker)", 
+                    "size": 300
+                }, 
+                {
+                    "name": "The WASP (Texas Radio and the Big Beat)", 
+                    "size": 256
+                }, 
+                {
+                    "name": "Riders on the Storm", 
+                    "size": 429
+                }
+            ]
+        }, 
+        {
+            "name": "Other Voices", 
+            "children": [
+                {
+                    "name": "In the Eye of the Sun (Ray Manzarek)", 
+                    "size": 288
+                }, 
+                {
+                    "name": "Variety Is the Spice of Life (Robby Krieger)", 
+                    "size": 170
+                }, 
+                {
+                    "name": "Ships w/Sails (Robby Krieger/John Densmore)", 
+                    "size": 458
+                }, 
+                {
+                    "name": "Tightrope Ride (Ray Manzarek/Robby Krieger)", 
+                    "size": 255
+                }, 
+                {
+                    "name": "Down on the Farm (Robby Krieger)", 
+                    "size": 255
+                }, 
+                {
+                    "name": "I'm Horny, I'm Stoned (Robby Krieger)", 
+                    "size": 235
+                }, 
+                {
+                    "name": "Wandering Musician (Robby Krieger)", 
+                    "size": 385
+                }, 
+                {
+                    "name": "Hang on to Your Life (Ray Manzarek/Robby Krieger)", 
+                    "size": 336
+                }
+            ]
+        }, 
+        {
+            "name": "Full Circle", 
+            "children": [
+                {
+                    "name": "Get Up and Dance (Krieger, Manzarek)", 
+                    "size": 146
+                }, 
+                {
+                    "name": "4 Billion Souls (Krieger)", 
+                    "size": 198
+                }, 
+                {
+                    "name": "Verdilac (Krieger, Manzarek)", 
+                    "size": 340
+                }, 
+                {
+                    "name": "Hardwood Floor (Krieger)", 
+                    "size": 218
+                }, 
+                {
+                    "name": "Good Rockin (Roy Brown)", 
+                    "size": 262
+                }, 
+                {
+                    "name": "The Mosquito (Densmore, Krieger, Manzarek)", 
+                    "size": 316
+                }, 
+                {
+                    "name": "The Piano Bird (Conrad, Densmore)", 
+                    "size": 350
+                }, 
+                {
+                    "name": "It Slipped My Mind (Krieger)", 
+                    "size": 191
+                }, 
+                {
+                    "name": "The Peking King and the New York Queen (Manzarek)", 
+                    "size": 385
+                }
+            ]
+        }, 
+        {
+            "name": "An American Prayer", 
+            "children": [
+                {
+                    "name": "Awake", 
+                    "size": 36
+                }, 
+                {
+                    "name": "Ghost Song", 
+                    "size": 253
+                }, 
+                {
+                    "name": "Dawn's Highway / Newborn Awakening", 
+                    "size": 228
+                }, 
+                {
+                    "name": "To Come of Age", 
+                    "size": 62
+                }, 
+                {
+                    "name": "Black Polished Chrome / Latino Chrome", 
+                    "size": 202
+                }, 
+                {
+                    "name": "Angels and Sailors / Stoned Immaculate", 
+                    "size": 260
+                }, 
+                {
+                    "name": "The Movie", 
+                    "size": 96
+                }, 
+                {
+                    "name": "Curses, Invocations", 
+                    "size": 118
+                }, 
+                {
+                    "name": "American Night", 
+                    "size": 29
+                }, 
+                {
+                    "name": "Roadhouse Blues [Live]", 
+                    "size": 419
+                }, 
+                {
+                    "name": "Lament", 
+                    "size": 139
+                }, 
+                {
+                    "name": "The Hitchhiker", 
+                    "size": 136
+                }, 
+                {
+                    "name": "An American Prayer", 
+                    "size": 413
+                }
+            ]
+        }
+    ]
+}
